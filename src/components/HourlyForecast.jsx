@@ -9,7 +9,7 @@ import iconStorm from "../assets/icon-storm.webp";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-function HourlyWeather({ weatherData }) {
+function HourlyWeather({ weatherData, isLoading }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState("Tuesday");
 
@@ -54,7 +54,7 @@ function HourlyWeather({ weatherData }) {
             className="bg-neutral-600 text-neutral-0 p-3 text-xs rounded-[10px] flex flex-row items-center gap-2"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span>{selectedDay}</span>
+            <span>{isLoading ? "–" : selectedDay}</span>
             <ChevronDown size={15} />
           </button>
 
@@ -129,15 +129,20 @@ function HourlyWeather({ weatherData }) {
           )}
         </div>
       </div>
-
-      {hourlyData.map((hour) => (
+      {isLoading ? 
+    Array.from({ length:8 }).map((_, i) => (
+      <div key={i} className="bg-neutral-600 mb-2 p-2 rounded-[10px] h-12" />
+    )  )
+    :
+      hourlyData.map((hour) => (
         <HourCard
           key={hour.time}
           time={hour.time}
           icon={hour.icon}
           temperature={hour.temperature}
         />
-      ))}
+      ))
+    }
     </div>
   );
 }

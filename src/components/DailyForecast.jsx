@@ -7,7 +7,7 @@ import iconSnow from "../assets/icon-snow.webp";
 import iconFoggy from "../assets/icon-fog.webp";
 import iconCloudy from "../assets/icon-partly-cloudy.webp";
 
-function DailyForecast({weatherData}) {
+function DailyForecast({weatherData, isLoading}) {
   const dailyData = weatherData ? weatherData.daily.time.slice(0,7).map((day, index) => {
   return{
     day: new Date(day).toLocaleDateString("en-US", { weekday: "short" }),
@@ -32,7 +32,12 @@ function getIconForCode(code) {
     <div className="mt-7">
       <h1 className="text-neutral-200">Daily forecast</h1>
       <div className="grid grid-cols-7 gap-2">
-        {dailyData.map((day) => {
+          {isLoading
+    ? Array.from({ length: 7 }).map((_, i) => (
+        <div key={i} className="bg-neutral-800 rounded-[10px] h-[139.99px] mt-4" />
+      ))
+    :
+        dailyData.map((day) => {
           return (
             <DailyCard
               key={day.day}
