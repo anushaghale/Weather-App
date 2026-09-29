@@ -7,11 +7,11 @@ import iconDrizzle from "../assets/icon-drizzle.webp";
 import iconRainy from "../assets/icon-rain.webp";
 import iconStorm from "../assets/icon-storm.webp";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 function HourlyWeather({ weatherData, isLoading }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDay, setSelectedDay] = useState("Tuesday");
+  const [selectedDay, setSelectedDay] = useState("");
 
   const hourlyData = weatherData
     ? weatherData.hourly.time
@@ -22,18 +22,22 @@ function HourlyWeather({ weatherData, isLoading }) {
               hour12: true,
             }),
             fulltime: time,
-            temperature: Math.round(weatherData.hourly.temperature_2m[index]) + "°",
+            temperature:
+              Math.round(weatherData.hourly.temperature_2m[index]) + "°",
             icon: getIconForCode(weatherData.hourly.weather_code[index]),
           };
         })
-        .filter((hour) => {
-          const dayName = new Date(hour.fulltime).toLocaleDateString([], {
-            weekday: "long",
-          });
-          return dayName === selectedDay;
-        })
+        .filter((hour) => 
+          hour.fulltime.slice(0,10) === selectedDay
+        )
         .slice(0, 8)
     : [];
+
+    useEffect(() => {
+if(weatherData){
+  setSelectedDay(weatherData.daily.time[0]);
+}
+    }, [weatherData]);
   function getIconForCode(code) {
     if (code === 0) return iconSunny;
     if (code >= 1 && code <= 3) return iconPartly;
@@ -54,95 +58,53 @@ function HourlyWeather({ weatherData, isLoading }) {
             className="bg-neutral-600 text-neutral-0 p-3 text-xs rounded-[10px] flex flex-row items-center gap-2"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span>{isLoading ? "–" : selectedDay}</span>
+            <span>{isLoading ? "–" : new Date(selectedDay).toLocaleDateString("en-US", {weekday: "long"})}</span>
             <ChevronDown size={15} />
           </button>
 
           {isOpen && (
             <div className="absolute right-0 bg-neutral-700 rounded-[10px] z-10 w-44">
               <div className="flex flex-col text-neutral-200 p-2 ">
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Monday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Monday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Tuesday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Tuesday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Wednesday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Wednesday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Thursday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Thursday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Friday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Friday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Saturday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Saturday
-                </button>
-                <button
-                  className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
-                  onClick={() => {
-                    setSelectedDay("Sunday");
-                    setIsOpen(false);
-                  }}
-                >
-                  Sunday
-                </button>
+                {weatherData
+                  ? weatherData.daily.time.map((day) => {
+                      const newDay = new Date(day).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      });
+
+                      return (
+                        <button
+                          key={day}
+                          className="p-2 hover:bg-neutral-600 rounded-[5px] text-left"
+                          onClick={() => {
+                            setSelectedDay(day);
+                            setIsOpen(false);
+                          }}
+                        >
+                          {newDay}
+                        </button>
+                      );
+                    })
+                  : []}
               </div>
             </div>
           )}
         </div>
       </div>
-      {isLoading ? 
-    Array.from({ length:8 }).map((_, i) => (
-      <div key={i} className="bg-neutral-600 mb-2 p-2 rounded-[10px] h-12" />
-    )  )
-    :
-      hourlyData.map((hour) => (
-        <HourCard
-          key={hour.time}
-          time={hour.time}
-          icon={hour.icon}
-          temperature={hour.temperature}
-        />
-      ))
-    }
+      {isLoading
+        ? Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-neutral-600 mb-2 p-2 rounded-[10px] h-12"
+            />
+          ))
+        : hourlyData.map((hour) => (
+            <HourCard
+              key={hour.time}
+              time={hour.time}
+              icon={hour.icon}
+              temperature={hour.temperature}
+            />
+          ))}
     </div>
   );
 }

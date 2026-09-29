@@ -26,6 +26,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [retryCount, setRetryCount] = useState(0);
+  const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -85,67 +86,71 @@ function App() {
           </div>
         ) : (
           <main>
-            <SearchBox setLocation={setLocation} />
-            <div className="flex items-stretch gap-6 p-8">
-              <div className="flex flex-1 flex-col min-w-0 ">
-                <CurrentWeather weatherData={weatherData} location={location} isLoading={isLoading} />
-                <div className="grid grid-cols-4 mt-6 gap-4">
-                  <StatWeather
-                    label="Feels Like"
-                    value={
-                      weatherData
-                        ? `${convertTemp(weatherData.current.apparent_temperature, tempUnit)}`
-                        : 
-                        isLoading ? 
-                        "--" : 
-                        "..."
-                    }
-                    unit={tempUnit}
+            <SearchBox setLocation={setLocation} setNoResults={setNoResults} />
+            {noResults ? (
+              <h1 className="text-neutral-0 p-4 text-xl text-center mt-4">
+                No search result found!
+              </h1>
+            ) : (
+              <div className="flex items-stretch gap-6 p-8">
+                <div className="flex flex-1 flex-col min-w-0 ">
+                  <CurrentWeather
+                    weatherData={weatherData}
+                    location={location}
+                    isLoading={isLoading}
                   />
-                  <StatWeather
-                    label="Humidity"
-                    value={
-                      weatherData
-                        ? `${weatherData.current.relative_humidity_2m}%`
-                        : 
-                        isLoading ? 
-                        "--" : 
-                        "..."
-                    }
-                  />
-                  <StatWeather
-                    label="Wind"
-                    value={
-                      weatherData
-                        ? `${convertWind(weatherData.current.wind_speed_10m, windUnit)}`
-                        : 
-                        isLoading ? 
-                        "--" : 
-                        "..."
-                    }
-                    unit={windUnit}
-                  />
-                  <StatWeather
-                    label="Precipitation"
-                    value={
-                      weatherData
-                        ? `${convertPrecip(weatherData.current.precipitation, precipUnit)}`
-                        : 
-                        isLoading ? 
-                        "--" : 
-                        "..."
-                    }
-                    unit={precipUnit}
+                  <div className="grid grid-cols-4 mt-6 gap-4">
+                    <StatWeather
+                      label="Feels Like"
+                      value={
+                        weatherData
+                          ? `${convertTemp(weatherData.current.apparent_temperature, tempUnit)}`
+                          : "--"
+                      }
+                      unit={tempUnit}
+                    />
+                    <StatWeather
+                      label="Humidity"
+                      value={
+                        weatherData
+                          ? `${weatherData.current.relative_humidity_2m}%`
+                          : "--"
+                      }
+                    />
+                    <StatWeather
+                      label="Wind"
+                      value={
+                        weatherData
+                          ? `${convertWind(weatherData.current.wind_speed_10m, windUnit)}`
+                          : "--"
+                      }
+                      unit={windUnit}
+                    />
+                    <StatWeather
+                      label="Precipitation"
+                      value={
+                        weatherData
+                          ? `${convertPrecip(weatherData.current.precipitation, precipUnit)}`
+                          : "--"
+                      }
+                      unit={precipUnit}
+                    />
+                  </div>
+
+                  <DailyForecast
+                    weatherData={weatherData}
+                    isLoading={isLoading}
                   />
                 </div>
 
-                <DailyForecast weatherData={weatherData} isLoading={isLoading} />
+                <div className="w-80 shrink-0">
+                  <HourlyWeather
+                    weatherData={weatherData}
+                    isLoading={isLoading}
+                  />
+                </div>
               </div>
-
-              <div className="w-80 shrink-0">
-                <HourlyWeather weatherData={weatherData} isLoading={isLoading} />
-              </div>
-            </div>
+            )}
           </main>
         )}
       </div>

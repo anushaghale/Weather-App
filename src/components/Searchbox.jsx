@@ -1,18 +1,29 @@
 import icon from "../assets/icon-search.svg";
 import { useState, useEffect } from "react";
+import iconLoading from "../assets/icon-loading.svg";
 
-function SearchBox({ setLocation }) {
+function SearchBox({ setLocation, setNoResults }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     if (searchQuery.length === 0) {
       setSuggestions([]);
+      setSearchLoading(false);
       return;
     }
 
-    fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${searchQuery}`)
+    setSearchLoading(true);
+    const controller = new AbortController();
+
+    fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${searchQuery}`,
+      {
+        signal: controller.signal,
+      },
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.results) {
@@ -20,7 +31,16 @@ function SearchBox({ setLocation }) {
         } else {
           setSuggestions([]);
         }
-      });
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") {
+          console.error("Error");
+        }
+      })
+      .finally(() => setSearchLoading(false));
+    return () => {
+      controller.abort();
+    };
   }, [searchQuery]);
 
   const handleSearch = () => {
@@ -32,9 +52,12 @@ function SearchBox({ setLocation }) {
           setLocation({
             name: `${city.name}, ${city.country}`,
             latitude: city.latitude,
-            longitude: city.longitude
+            longitude: city.longitude,
           });
           setShowSuggestions(false);
+          setNoResults(false);
+        } else {
+          setNoResults(true);
         }
       });
   };
@@ -59,30 +82,48 @@ function SearchBox({ setLocation }) {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
+              setNoResults(false);
               setShowSuggestions(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleSearch();
+              }
             }}
             className="text-neutral-200 bg-neutral-800 rounded-[10px] w-96 pl-10 p-2 placeholder:text-sm"
             placeholder="Search for a place..."
           />
           {showSuggestions && (
             <div className="absolute mt-2 bg-neutral-800 rounded-[10px] text-sm text-neutral-200 w-full z-10">
-              {suggestions.map((city) => (
-                <button
-                  key={city.id}
-                  onClick={() => {
-                    setSearchQuery(`${city.name}, ${city.country}`);
-                    setShowSuggestions(false);
-                    setLocation({
-                      name: `${city.name}, ${city.country}`,
-                      latitude: city.latitude,
-                      longitude: city.longitude,
-                    });
-                  }}
-                  className="block w-full text-left p-2 hover:bg-neutral-600"
-                >
-                  {city.name}, {city.country}
-                </button>
-              ))}
+              {searchLoading ? (
+                <div className="flex gap-2 p-2">
+                  <img
+                    src={iconLoading}
+                    alt="loading"
+                    className="w-4 h-4 animate-spin"
+                  />
+                  <p className="text-xs text-neutral-200">Search in progress</p>
+                </div>
+              ) : (
+                suggestions.map((city) => (
+                  <button
+                    key={city.id}
+                    onClick={() => {
+                      setSearchQuery(`${city.name}, ${city.country}`);
+                      setShowSuggestions(false);
+                      setNoResults(false);
+                      setLocation({
+                        name: `${city.name}, ${city.country}`,
+                        latitude: city.latitude,
+                        longitude: city.longitude,
+                      });
+                    }}
+                    className="block w-full text-left p-2 hover:bg-neutral-600"
+                  >
+                    {city.name}, {city.country}
+                  </button>
+                ))
+              )}
             </div>
           )}
         </div>
