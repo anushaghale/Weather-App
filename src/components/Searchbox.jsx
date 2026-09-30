@@ -65,12 +65,12 @@ function SearchBox({ setLocation, setNoResults }) {
   return (
     <>
       <div className="flex items-center justify-center">
-        <h1 className="text-neutral-0 text-4xl font-bold mb-6">
+        <h1 className="text-neutral-0 w-50 md:w-auto text-center text-4xl font-bold mb-6">
           How's the sky looking today?
         </h1>
       </div>
 
-      <div className="text-neutral-200 flex flex-row gap-2 items-center justify-center">
+      <div className="text-neutral-200 flex flex-col md:flex-row gap-2 items-center justify-center">
         <div className="relative">
           <img
             src={icon}
@@ -90,7 +90,7 @@ function SearchBox({ setLocation, setNoResults }) {
                 handleSearch();
               }
             }}
-            className="text-neutral-200 bg-neutral-800 rounded-[10px] w-96 pl-10 p-2 placeholder:text-sm"
+            className="text-neutral-200 bg-neutral-800 rounded-[10px] w-75 md:w-96 pl-10 p-2 placeholder:text-sm hover:bg-neutral-700 "
             placeholder="Search for a place..."
           />
           {showSuggestions && (
@@ -128,7 +128,7 @@ function SearchBox({ setLocation, setNoResults }) {
           )}
         </div>
         <button
-          className="bg-blue-500 rounded-[10px] w-20 p-2"
+          className="bg-blue-700 hover:bg-blue-800 cursor-pointer rounded-[10px] w-75 md:w-20 p-2"
           onClick={handleSearch}
         >
           <span className="text-sm">Search</span>

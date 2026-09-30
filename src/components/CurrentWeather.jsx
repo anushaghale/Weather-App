@@ -1,4 +1,5 @@
-import bg from "../assets/bg-today-large.svg";
+import bgLarge from "../assets/bg-today-large.svg";
+import bgSmall from "../assets/bg-today-small.svg"; 
 import iconSunny from "../assets/icon-sunny.webp";
 
 function CurrentWeather({ weatherData, location, isLoading }) {
@@ -29,14 +30,17 @@ function CurrentWeather({ weatherData, location, isLoading }) {
   }
   return (
     <div
-      className="bg-cover rounded-2xl p-8 h-56 flex justify-between items-center "
-      style={{ backgroundImage: `url(${bg})` }}
+      className="bg-cover rounded-2xl p-8 h-56 flex justify-between items-center bg-(image:--bg-small) md:bg-(image:--bg-large)"
+      style={{
+         "--bg-small": `url(${bgSmall})`,
+    "--bg-large": `url(${bgLarge})`,
+       }}
     >
       <div>
         <p className="text-neutral-0 text-2xl font-bold">{location.name}</p>
         <p className="text-neutral-200">{today}</p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row items-center gap-2">
         <img src={iconSunny} alt="sunny-icon" width={80} height={80} />
         {weatherData && (
           <p className="text-neutral-0 text-6xl font-bold italic">

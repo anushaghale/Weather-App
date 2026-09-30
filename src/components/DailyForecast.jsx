@@ -31,7 +31,7 @@ function getIconForCode(code) {
   return (
     <div className="mt-7">
       <h1 className="text-neutral-200">Daily forecast</h1>
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-3 md:grid-cols-7 gap-2">
           {isLoading
     ? Array.from({ length: 7 }).map((_, i) => (
         <div key={i} className="bg-neutral-800 rounded-[10px] h-[139.99px] mt-4" />

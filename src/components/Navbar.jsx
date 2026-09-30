@@ -4,7 +4,7 @@ import logo from "../assets/logo.svg";
 function UnitOption({ label, isSelected, onSelect, showBorder }) {
   return (
     <button
-      className={`p-2 hover:bg-neutral-600 rounded-[5px] text-start flex justify-between ${
+      className={`p-2 hover:bg-neutral-600 rounded-[5px] text-start flex justify-between cursor-pointer ${
         showBorder ? "border-b border-neutral-600 pt-2" : ""
       }`}
       onClick={onSelect}
@@ -27,11 +27,11 @@ function Navbar({
 }) {
   return (
     <div className="flex justify-between p-8 items-center ">
-      <img src={logo} alt="Weather Now logo" className="w-44 h-14" />
+      <img src={logo} alt="Weather Now logo" className="w-32 h-10 md:w-44 md:h-14" />
 
       <div className="relative">
         <button
-          className="bg-neutral-800 gap-2 rounded-[10px] outline-none ring-offset-neutral-800 transition-all duration-100 ease-out focus:outline-none focus:ring-2 focus:ring-white w-28 p-3 flex items-center justify-center"
+          className="bg-neutral-800 gap-2 rounded-[10px] cursor-pointer hover:bg-neutral-600 outline-none ring-offset-neutral-800 transition-all duration-100 ease-out focus:outline-none focus:ring-2 focus:ring-white w-24 p-2 md:w-28 md:p-3 flex items-center justify-center"
           onClick={() => setIsOpen(!isOpen)}
         >
           <Settings className="text-neutral-200" size={20} />
@@ -42,7 +42,7 @@ function Navbar({
         {isOpen && (
           <div className="absolute right-0 bg-neutral-700 rounded-[10px] z-10 w-40 text-xs mt-2">
             <div className="flex flex-col text-neutral-200 p-2">
-              <p className="m-2">Switch to imperial</p>
+              <p className="border rounded-[5px] border-transparent cursor-pointer hover:bg-neutral-600 p-2">Switch to imperial</p>
 
               <p className="text-neutral-300 m-2">Temperature</p>
               <UnitOption

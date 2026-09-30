@@ -67,7 +67,7 @@ function App() {
         {error ? (
           <div className="flex flex-col items-center justify-center text-neutral-200 gap-2 mt-20">
             <img src={iconError} alt="Error" className=" w-8 h-8 mb-4" />
-            <h1 className="text-4xl font-bold text-white">
+            <h1 className="text-center md:text-4xl font-bold text-white">
               Something went wrong
             </h1>
 
@@ -92,14 +92,14 @@ function App() {
                 No search result found!
               </h1>
             ) : (
-              <div className="flex items-stretch gap-6 p-8">
+              <div className="flex flex-col md:flex-row items-stretch gap-6 p-8">
                 <div className="flex flex-1 flex-col min-w-0 ">
                   <CurrentWeather
                     weatherData={weatherData}
                     location={location}
                     isLoading={isLoading}
                   />
-                  <div className="grid grid-cols-4 mt-6 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 mt-6 gap-4">
                     <StatWeather
                       label="Feels Like"
                       value={
@@ -143,7 +143,7 @@ function App() {
                   />
                 </div>
 
-                <div className="w-80 shrink-0">
+                <div className="w-75 md:w-80 shrink-0">
                   <HourlyWeather
                     weatherData={weatherData}
                     isLoading={isLoading}

@@ -50,12 +50,12 @@ if(weatherData){
     return iconStorm;
   }
   return (
-    <div className="flex flex-col text-neutral-200 bg-neutral-800 rounded-2xl p-4 text-sm">
+    <div className="flex flex-col text-neutral-200 bg-neutral-800 rounded-2xl p-4 text-sm h-full">
       <div className="flex flex-row justify-between items-center mb-4">
         <p className="text-neutral-0">Hourly forecast</p>
         <div className="relative">
           <button
-            className="bg-neutral-600 text-neutral-0 p-3 text-xs rounded-[10px] flex flex-row items-center gap-2"
+            className="bg-neutral-600 text-neutral-0 p-3 text-xs rounded-[10px] flex flex-row items-center gap-2 cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
           >
             <span>{isLoading ? "–" : new Date(selectedDay).toLocaleDateString("en-US", {weekday: "long"})}</span>
@@ -111,7 +111,7 @@ if(weatherData){
 
 function HourCard({ time, icon, temperature }) {
   return (
-    <div className="flex flex-row justify-between items-center mb-2 bg-neutral-700 rounded-[10px] p-2">
+    <div className="flex flex-row justify-between items-center mt-2.5 bg-neutral-700 rounded-[10px] p-2">
       <div className="flex gap-2 items-center">
         <img src={icon} alt="hourly-icon" className="w-8 h-8" />
         <p>{time}</p>
