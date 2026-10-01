@@ -7,6 +7,7 @@ function SearchBox({ setLocation, setNoResults }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
     if (searchQuery.length === 0) {
@@ -86,8 +87,27 @@ function SearchBox({ setLocation, setNoResults }) {
               setShowSuggestions(true);
             }}
             onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                handleSearch();
+              if (e.key === "ArrowDown") {
+                setActiveIndex((prev) =>
+                  Math.min(prev + 1, suggestions.length - 1),
+                );
+              } else if (e.key === "ArrowUp") {
+                setActiveIndex((prev) => Math.max(prev - 1, 0));
+              } else if (e.key == "Enter") {
+                if (activeIndex >= 0 && suggestions[activeIndex]) {
+                  const city = suggestions[activeIndex];
+                  setSearchQuery(`${city.name} ${city.country}`);
+                  setShowSuggestions(false);
+                  setNoResults(false);
+                  setLocation({
+                    name: `${city.name}, ${city.country}`,
+                    latitude: city.latitude,
+                    longitude: city.longitude,
+                  });
+                  setActiveIndex(-1);
+                } else {
+                  handleSearch();
+                }
               }
             }}
             className="text-neutral-200 bg-neutral-800 rounded-[10px] w-75 md:w-96 pl-10 p-2 placeholder:text-sm hover:bg-neutral-700 "
@@ -105,7 +125,7 @@ function SearchBox({ setLocation, setNoResults }) {
                   <p className="text-xs text-neutral-200">Search in progress</p>
                 </div>
               ) : (
-                suggestions.map((city) => (
+                suggestions.map((city, index) => (
                   <button
                     key={city.id}
                     onClick={() => {
@@ -118,7 +138,7 @@ function SearchBox({ setLocation, setNoResults }) {
                         longitude: city.longitude,
                       });
                     }}
-                    className="block w-full text-left p-2 hover:bg-neutral-600"
+                    className={`block w-full text-left p-2 hover:bg-neutral-600 ${index === activeIndex ? "bg-neutral-600" : ""}`}
                   >
                     {city.name}, {city.country}
                   </button>
